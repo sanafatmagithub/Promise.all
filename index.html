@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    const posts = [
+    { title: "Post one", body: "This is post one" },
+    { title: "Post two", body: "This is post two" },
+];
+let lastActivity = new Date();
+// before any user activity log the activity time
+console.log("Before creating a new post: ", lastActivity);
+
+// update user activity time
+const upUserAct = function updateLastUserActivityTime() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            lastActivity = new Date();
+            resolve(lastActivity);
+        }, 1000);
+    });
+};
+
+// create a new post - takes one second
+const crNewPst = function createNewPost(post) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            posts.push(post);
+            const error = false; // change to true to get error
+            if (!error) {
+                resolve();
+            } else {
+                reject("Error: Something went wrong");
+            }
+        }, 1000);
+    });
+};
+
+// to delete a post - from end
+const dltPst = function deletion() {
+    return new Promise((resolve, reject) => {
+        posts.pop();
+        resolve();
+    });
+};
+
+// promise.all
+Promise.all([
+    upUserAct(),
+    crNewPst({ title: "New post", body: "This is a new post" }),
+])
+    .then((act) => {
+        posts.forEach((post) => {
+            console.log(post.title);
+        });
+        console.log("Last user activity: ", act[0]);
+    })
+    .then(() => {
+        return Promise.all([dltPst(), upUserAct()]);
+    })
+    .then((act) => {
+        posts.forEach((post) => {
+            console.log(post.title);
+        });
+        console.log("Last user activity: ", act[1]);
+    });
+    </script>
+</body>
+</html>
