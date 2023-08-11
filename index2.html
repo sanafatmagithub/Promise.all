@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+    const posts = [
+        { title: "Post one", body: "This is post one" },
+        { title: "Post two", body: "This is post two" },
+    ];
+    let lastActivity = new Date();
+
+    // before any user activity log the activity time
+    console.log("Before creating a new post: ", lastActivity);
+
+    // update user activity time
+    async function updateLastUserActivityTime() {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        lastActivity = new Date();
+        return lastActivity;
+    }
+
+    // create a new post - takes one second
+    async function createNewPost(post) {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        const error = false; // change to true to get error
+        if (!error) {
+            posts.push(post);
+        } else {
+            throw new Error("Error: Something went wrong");
+        }
+    }
+
+    // delete a post - from end
+    async function deletePost() {
+        posts.pop();
+    }
+
+    async function main() {
+        try {
+            const [lastActivityBefore, newPostActivity] = await Promise.all([
+                updateLastUserActivityTime(),
+                createNewPost({ title: "New post", body: "This is a new post" }),
+            ]);
+
+            posts.forEach((post) => {
+                console.log(post.title);
+            });
+            console.log("Last user activity before creating post: ", lastActivityBefore);
+
+            await deletePost();
+            const lastActivityAfterDelete = await updateLastUserActivityTime();
+
+            posts.forEach((post) => {
+                console.log(post.title);
+            });
+            console.log("Last user activity after deleting post: ", lastActivityAfterDelete);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
+    main();
+    </script>
+</body>
+</html>
